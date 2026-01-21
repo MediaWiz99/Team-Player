@@ -663,6 +663,9 @@
                 icon: "📊",
                 color: "#2E7D32",
                 description: "The Contributor is a task-oriented team member who enjoys providing technical information and data to the team. You are dependable, responsible, and organized. You believe the team's success depends on members completing their individual tasks with high quality.",
+                profileSummary: "You bring reliability and expertise to every team. Your focus on quality and thoroughness ensures the team has accurate information and well-executed deliverables.",
+                teamRole: "You serve as the team's quality anchor—ensuring that work meets high standards and that decisions are grounded in solid information and data.",
+                collaborationStyle: "You prefer structured collaboration with clear individual responsibilities. You contribute best when you can prepare thoroughly and deliver polished work.",
                 strengths: [
                     "Provide reliable technical information and expertise",
                     "Complete assignments on time and with high quality",
@@ -677,7 +680,11 @@
                     "Sometimes fail to see the importance of team climate",
                     "May resist flexible approaches to problems"
                 ],
-                characteristics: ["Dependable", "Responsible", "Organized", "Thorough", "Quality-focused"]
+                characteristics: ["Dependable", "Responsible", "Organized", "Thorough", "Quality-focused"],
+                swotStrength: "Delivers reliable, high-quality work; teams can count on your expertise and thoroughness",
+                swotWeakness: "May prioritize task perfection over team relationships and flexibility",
+                swotOpportunity: "Develop big-picture awareness and invest in team process alongside task excellence",
+                swotThreat: "Risk of being perceived as inflexible or overly critical of others' work"
             },
             collaborator: {
                 title: "The Collaborator",
@@ -685,6 +692,9 @@
                 icon: "🎯",
                 color: "#1565C0",
                 description: "The Collaborator is a goal-oriented team member who sees the vision, mission, and goals of the team as paramount. You are willing to extend yourself beyond your traditional role to help the team achieve its goals. You are flexible and willing to pitch in wherever needed.",
+                profileSummary: "You keep teams focused on what matters most—the shared mission. Your flexibility and strategic vision help teams navigate obstacles and stay aligned.",
+                teamRole: "You serve as the team's strategic compass—ensuring everyone understands the mission and pulling people together around shared goals.",
+                collaborationStyle: "You prefer collaborative work focused on achieving outcomes. You're willing to blur role boundaries and do whatever it takes to help the team succeed.",
                 strengths: [
                     "Help the team establish long-range goals and objectives",
                     "Are flexible and willing to work outside defined role",
@@ -699,7 +709,11 @@
                     "Sometimes fail to recognize need for process improvements",
                     "May be perceived as too future-focused"
                 ],
-                characteristics: ["Visionary", "Flexible", "Goal-focused", "Strategic", "Committed"]
+                characteristics: ["Visionary", "Flexible", "Goal-focused", "Strategic", "Committed"],
+                swotStrength: "Maintains strategic focus and rallies teams around shared vision and goals",
+                swotWeakness: "May neglect short-term tasks and immediate individual needs",
+                swotOpportunity: "Balance big-picture thinking with attention to execution details and team process",
+                swotThreat: "Risk of teams losing ground on daily execution while focused on long-term vision"
             },
             communicator: {
                 title: "The Communicator",
@@ -707,6 +721,9 @@
                 icon: "💬",
                 color: "#F57C00",
                 description: "The Communicator is a process-oriented team member who is an effective listener and facilitator. You help with involvement, conflict resolution, consensus building, and creating an informal, relaxed climate. You are positive and supportive of team members.",
+                profileSummary: "You create the conditions where teams thrive. Your attention to process, relationships, and climate helps teams work together effectively.",
+                teamRole: "You serve as the team's facilitator and climate-setter—ensuring everyone feels heard, conflicts get resolved, and the team maintains positive momentum.",
+                collaborationStyle: "You prefer inclusive collaboration where all voices are heard. You invest in relationships and create space for everyone to participate.",
                 strengths: [
                     "Help the team relax and have fun with humor and warmth",
                     "Step in to resolve conflicts and process problems",
@@ -721,7 +738,11 @@
                     "Sometimes overuse humor and process techniques",
                     "May not give enough emphasis to long-range planning"
                 ],
-                characteristics: ["Supportive", "Encouraging", "Enthusiastic", "Humorous", "Inclusive"]
+                characteristics: ["Supportive", "Encouraging", "Enthusiastic", "Humorous", "Inclusive"],
+                swotStrength: "Creates positive team climate and ensures inclusive, effective collaboration",
+                swotWeakness: "May prioritize harmony over necessary confrontation or task completion",
+                swotOpportunity: "Develop comfort with productive conflict and balance process with results focus",
+                swotThreat: "Risk of teams feeling good but underperforming on deliverables"
             },
             challenger: {
                 title: "The Challenger",
@@ -729,6 +750,9 @@
                 icon: "⚡",
                 color: "#C62828",
                 description: "The Challenger is the team member who questions the goals, methods, and even ethics of the team. You are willing to disagree with the leader and encourage well-conceived risks. You are candid, honest, and push for high standards.",
+                profileSummary: "You push teams to think critically and avoid groupthink. Your willingness to ask tough questions helps teams make better decisions.",
+                teamRole: "You serve as the team's constructive critic—ensuring assumptions get tested, risks get evaluated, and the team doesn't settle for mediocrity.",
+                collaborationStyle: "You prefer direct, honest collaboration where ideas get debated rigorously. You contribute by questioning and stress-testing the team's thinking.",
                 strengths: [
                     "Are willing to disagree with team leader when necessary",
                     "Candidly share views about the work of the team",
@@ -743,7 +767,11 @@
                     "Sometimes paint yourself into a corner",
                     "Can be too direct in communicating with teammates"
                 ],
-                characteristics: ["Candid", "Honest", "Principled", "Assertive", "Courageous"]
+                characteristics: ["Candid", "Honest", "Principled", "Assertive", "Courageous"],
+                swotStrength: "Prevents groupthink and ensures teams consider risks and alternatives",
+                swotWeakness: "May damage relationships or team morale with excessive challenge",
+                swotOpportunity: "Develop diplomatic challenge skills and know when to support vs. question",
+                swotThreat: "Risk of being marginalized as 'difficult' or creating team conflict"
             }
         };
 
@@ -897,6 +925,20 @@
             const comboKey = [primaryStyle, secondaryStyle].sort().join('-');
             const combination = combinationStyles[comboKey];
             
+            // Calculate percentages and style clarity
+            const totalScore = scores.contributor + scores.collaborator + scores.communicator + scores.challenger;
+            const primaryPct = Math.round((sortedStyles[0][1] / totalScore) * 100);
+            const styleClarity = primaryPct >= 35 ? 'Strong' : primaryPct >= 28 ? 'Moderate' : 'Balanced';
+            
+            // Calculate orientation: Task (Contributor+Challenger) vs People (Collaborator+Communicator)
+            const taskScore = scores.contributor + scores.challenger;
+            const peopleScore = scores.collaborator + scores.communicator;
+            const teamOrientation = taskScore > peopleScore ? 'Task-Oriented' : taskScore < peopleScore ? 'People-Oriented' : 'Balanced';
+            
+            // Generate tracker code
+            const styleAbbrev = { contributor: 'Ct', collaborator: 'Cl', communicator: 'Cm', challenger: 'Ch' };
+            const trackerCode = `TPA-${styleAbbrev[primaryStyle]}${styleAbbrev[secondaryStyle]}-${styleClarity.charAt(0)}`;
+            
             const resultsDiv = document.getElementById('results');
             resultsDiv.innerHTML = `
                 <div class="results-header">
@@ -928,6 +970,55 @@
                     </div>
                 </div>
                 
+                <!-- TRACKER SUMMARY SECTION -->
+                <div style="background: linear-gradient(135deg, #1a3a7a 0%, #00205B 100%); color: white; padding: 25px; border-radius: 14px; margin: 20px 0;">
+                    <h3 style="color: #C4A000; margin-bottom: 15px; font-size: 1.3em;">📋 Assessment Tracker Summary</h3>
+                    <p style="font-size: 0.9em; opacity: 0.9; margin-bottom: 15px;">Copy this information into your Assessment Tracker at the end of the semester.</p>
+                    
+                    <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 10px; margin-bottom: 15px;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                            <div>
+                                <div style="font-size: 0.8em; opacity: 0.8; text-transform: uppercase; letter-spacing: 1px;">Primary Style</div>
+                                <div style="font-size: 1.4em; font-weight: 700; color: #F5E6A3;">${primary.title}</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 0.8em; opacity: 0.8; text-transform: uppercase; letter-spacing: 1px;">Secondary Style</div>
+                                <div style="font-size: 1.4em; font-weight: 700; color: #F5E6A3;">${secondary.title}</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 0.8em; opacity: 0.8; text-transform: uppercase; letter-spacing: 1px;">Style Clarity</div>
+                                <div style="font-size: 1.2em; font-weight: 600;">${styleClarity} (${primaryPct}%)</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 0.8em; opacity: 0.8; text-transform: uppercase; letter-spacing: 1px;">Team Orientation</div>
+                                <div style="font-size: 1.2em; font-weight: 600;">${teamOrientation}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                        <div style="font-size: 0.8em; opacity: 0.8; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">Score Distribution</div>
+                        <div style="font-family: monospace; font-size: 1em;">
+                            Contributor: ${scores.contributor}/72 | Collaborator: ${scores.collaborator}/72 | Communicator: ${scores.communicator}/72 | Challenger: ${scores.challenger}/72
+                        </div>
+                    </div>
+
+                    <div style="background: rgba(196, 160, 0, 0.2); padding: 15px; border-radius: 8px; border-left: 4px solid #C4A000;">
+                        <div style="font-size: 0.8em; opacity: 0.8; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">Key Characteristics for SWOT Analysis</div>
+                        <div style="font-size: 0.95em; line-height: 1.6;">
+                            <strong>Team Role:</strong> ${primary.teamRole}<br>
+                            <strong>Collaboration Style:</strong> ${primary.collaborationStyle}<br>
+                            <strong>Primary Challenge:</strong> ${primary.challenges[0]}
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 15px; padding: 12px; background: rgba(255,255,255,0.1); border-radius: 8px; font-family: monospace; font-size: 0.85em;">
+                        <span style="opacity: 0.7;">Tracker Code:</span> <strong style="color: #F5E6A3;">${trackerCode}</strong> 
+                        <span style="opacity: 0.7; margin-left: 15px;">|</span>
+                        <span style="opacity: 0.7; margin-left: 15px;">Raw:</span> <strong>Ct${scores.contributor}-Cl${scores.collaborator}-Cm${scores.communicator}-Ch${scores.challenger}</strong>
+                    </div>
+                </div>
+                
                 <div class="results-body">
                     <div class="type-card ${primaryStyle}">
                         <div class="type-label primary">Primary Style</div>
@@ -939,6 +1030,23 @@
                             </div>
                         </div>
                         <p class="type-description">${primary.description}</p>
+                        
+                        <!-- Enhanced Profile Section -->
+                        <div style="background: linear-gradient(135deg, #fffef8 0%, #fef9e7 100%); padding: 20px; border-radius: 12px; margin: 20px 0; border-left: 4px solid #C4A000;">
+                            <h5 style="color: var(--chapman-blue); margin-bottom: 12px;">📋 Your Team Player Profile</h5>
+                            <p style="color: var(--text-secondary); margin-bottom: 15px; line-height: 1.7;">${primary.profileSummary}</p>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                                <div style="padding: 12px; background: rgba(0,32,91,0.05); border-radius: 8px;">
+                                    <strong style="color: var(--chapman-blue); font-size: 0.85em; text-transform: uppercase;">Your Team Role</strong>
+                                    <p style="margin-top: 5px; font-size: 0.9em; color: var(--text-secondary);">${primary.teamRole}</p>
+                                </div>
+                                <div style="padding: 12px; background: rgba(0,32,91,0.05); border-radius: 8px;">
+                                    <strong style="color: var(--chapman-blue); font-size: 0.85em; text-transform: uppercase;">Collaboration Style</strong>
+                                    <p style="margin-top: 5px; font-size: 0.9em; color: var(--text-secondary);">${primary.collaborationStyle}</p>
+                                </div>
+                            </div>
+                        </div>
+                        
                         <div class="characteristics">
                             ${primary.characteristics.map(c => `<span class="characteristic-tag">${c}</span>`).join('')}
                         </div>
@@ -971,6 +1079,30 @@
                     <div class="result-section growth gold-accent">
                         <h4>🎯 Areas for Growth</h4>
                         <ul>${primary.challenges.map(c => `<li>${c}</li>`).join('')}</ul>
+                    </div>
+                    
+                    <!-- SWOT Preview Section -->
+                    <div style="background: linear-gradient(135deg, var(--blue-light) 0%, #f0f4fa 100%); border-radius: 14px; padding: 25px; margin: 20px 0; border: 2px solid var(--chapman-blue);">
+                        <h4 style="color: var(--chapman-blue); margin-bottom: 15px; font-size: 1.2em;">📊 SWOT Analysis Preview (For Assessment Tracker)</h4>
+                        <p style="color: var(--text-secondary); font-size: 0.9em; margin-bottom: 15px;">This preview shows how your Team Player Style will contribute to your comprehensive SWOT analysis.</p>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                            <div style="background: #E8F5E9; padding: 15px; border-radius: 10px; border-left: 4px solid #2E7D32;">
+                                <strong style="color: #2E7D32; font-size: 0.9em;">STRENGTH</strong>
+                                <p style="font-size: 0.9em; margin-top: 5px; color: var(--text-secondary);">${primary.swotStrength}</p>
+                            </div>
+                            <div style="background: #FFEBEE; padding: 15px; border-radius: 10px; border-left: 4px solid #C62828;">
+                                <strong style="color: #C62828; font-size: 0.9em;">WEAKNESS</strong>
+                                <p style="font-size: 0.9em; margin-top: 5px; color: var(--text-secondary);">${primary.swotWeakness}</p>
+                            </div>
+                            <div style="background: #E3F2FD; padding: 15px; border-radius: 10px; border-left: 4px solid #1565C0;">
+                                <strong style="color: #1565C0; font-size: 0.9em;">OPPORTUNITY</strong>
+                                <p style="font-size: 0.9em; margin-top: 5px; color: var(--text-secondary);">${primary.swotOpportunity}</p>
+                            </div>
+                            <div style="background: #FFF3E0; padding: 15px; border-radius: 10px; border-left: 4px solid #E65100;">
+                                <strong style="color: #E65100; font-size: 0.9em;">THREAT</strong>
+                                <p style="font-size: 0.9em; margin-top: 5px; color: var(--text-secondary);">${primary.swotThreat}</p>
+                            </div>
+                        </div>
                     </div>
                     
                     <div class="styles-overview">
