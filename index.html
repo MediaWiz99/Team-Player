@@ -1160,6 +1160,13 @@
             const secondaryStyle = sortedStyles[1][0];
             const primary = styleData[primaryStyle];
             const secondary = styleData[secondaryStyle];
+            
+            // Generate tracker code for PDF
+            const totalScore = scores.contributor + scores.collaborator + scores.communicator + scores.challenger;
+            const primaryPct = Math.round((sortedStyles[0][1] / totalScore) * 100);
+            const styleClarity = primaryPct >= 35 ? 'Strong' : primaryPct >= 28 ? 'Moderate' : 'Balanced';
+            const styleAbbrev = { contributor: 'Ct', collaborator: 'Cl', communicator: 'Cm', challenger: 'Ch' };
+            const trackerCode = 'TPA-' + styleAbbrev[primaryStyle] + styleAbbrev[secondaryStyle] + '-' + styleClarity.charAt(0);
 
             // Header
             doc.setFillColor(...chapmanBlue);
@@ -1183,7 +1190,15 @@
             doc.setTextColor(...textDark);
             doc.text(`Student: ${studentName}`, 20, y);
             doc.text(`Date: ${new Date(surveyDate).toLocaleDateString()}`, 120, y);
-            y += 10;
+            y += 8;
+            
+            // Tracker Code Bar
+            doc.setFillColor(...chapmanBlue);
+            doc.roundedRect(20, y, 170, 10, 2, 2, 'F');
+            doc.setFontSize(9);
+            doc.setTextColor(255, 255, 255);
+            doc.text('Tracker: ' + trackerCode + '  |  Primary: ' + primary.title + '  |  Secondary: ' + secondary.title, 105, y + 7, { align: 'center' });
+            y += 14;
 
             // Scores
             doc.setFontSize(9);
